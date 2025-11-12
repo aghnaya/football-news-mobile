@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:football_news/screens/login.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:football_news/screens/login.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -23,6 +23,12 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -45,7 +51,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   const SizedBox(height: 30.0),
-                  TextField(
+                  TextFormField(
                     controller: _usernameController,
                     decoration: const InputDecoration(
                       labelText: 'Username',
@@ -53,11 +59,12 @@ class _RegisterPageState extends State<RegisterPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                   ),
                   const SizedBox(height: 12.0),
-                  TextField(
+                  TextFormField(
                     controller: _passwordController,
                     decoration: const InputDecoration(
                       labelText: 'Password',
@@ -65,12 +72,13 @@ class _RegisterPageState extends State<RegisterPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                     obscureText: true,
                   ),
                   const SizedBox(height: 12.0),
-                  TextField(
+                  TextFormField(
                     controller: _confirmPasswordController,
                     decoration: const InputDecoration(
                       labelText: 'Confirm Password',
@@ -78,7 +86,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(12.0)),
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                     ),
                     obscureText: true,
                   ),
@@ -89,15 +98,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       String password1 = _passwordController.text;
                       String password2 = _confirmPasswordController.text;
 
-                      if (password1 != password2) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Passwords do not match")),
-                        );
-                        return;
-                      }
-
                       final response = await request.postJson(
-                        "http://10.0.2.2:8000/auth/register/",
+                        "http://127.0.0.1:8000//auth/register/",
                         jsonEncode({
                           "username": username,
                           "password1": password1,
@@ -106,44 +108,34 @@ class _RegisterPageState extends State<RegisterPage> {
                       );
 
                       if (context.mounted) {
-                        if (response['status'] == 'success') {
+                        if (response['status'] == true) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Successfully registered!')),
+                            const SnackBar(
+                              content: Text('Successfully registered!'),
+                            ),
                           );
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(response['message'] ?? 'Failed to register!')),
+                            SnackBar(
+                              content:
+                                  Text(response['message'] ?? 'Failed to register!'),
+                            ),
                           );
                         }
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, 50),
+                      minimumSize: const Size(double.infinity, 50),
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                     ),
                     child: const Text('Register'),
-                  ),
-                  const SizedBox(height: 36.0),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()),
-                      );
-                    },
-                    child: Text(
-                      'Already have an account? Login',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 16.0,
-                      ),
-                    ),
                   ),
                 ],
               ),
